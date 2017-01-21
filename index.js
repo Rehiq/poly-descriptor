@@ -7,17 +7,22 @@ var dir = process.argv[2] || '.';
 
 function createJs(path, content) {
 	var paths = stripPath(path);
-	var jsPath = paths.path + PATH.sep + paths.js;
+	var jsPath = paths.path + PATH.sep + paths.name + ".js";
 	FS.writeFileSync(jsPath, content);
 }
 
 function stripPath(path) {
 	var aPath = path.split(PATH.sep);
 	var name = aPath.splice(-1,1)[0];
-	return {
+	var result = {
 		path: aPath.join(PATH.sep),
-		js: name.split('.')[0] + ".js"
+		name: name.split('.')[0]
 	};
+	if (FS.existsSync(result.name + ".js")) {
+		result.name = result.name + "_outsider";
+	}
+
+	return result;
 }
 
 function parseFile(path) {
@@ -32,13 +37,19 @@ function parseFile(path) {
 					(script) => {
 					if (!script.getAttribute('src')) {
 						var paths = stripPath(path);
-						script.setAttribute('src', paths.js);
-						createJs(path, script.textContent);
+
+						script.setAttribute('src', paths.name + ".js");
+						createJs(paths.path + PATH.sep + paths.name + ".js", script.textContent);
 						script.textContent = '';
 						FS.truncateSync(path, 0);
-						FS.writeFileSync(path, document.documentElement.innerHTML);
-						// console.log(FS.readFileSync(path, 'utf-8'));
-						// process.exit();
+
+						if (path.indexOf('/index') !== -1) {
+							FS.writeFileSync(path,
+								document.documentElement.innerHTML);
+						} else {
+							FS.writeFileSync(path,
+								document.head.innerHTML + document.body.innerHTML);
+						}
 					}
 				});
 			}
