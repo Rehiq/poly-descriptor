@@ -1,12 +1,23 @@
 {
   "name": "poly-descriptor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "bin": {
+    "poly-descriptor": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rehiq/poly-descriptor.git"
+  },
+  "keywords": [
+      "polymer",
+      "remove scripts from html"
+    ],
+  "author": "rehiq",
   "license": "MIT",
   "dependencies": {
     "jsdom": "^9.9.1",
